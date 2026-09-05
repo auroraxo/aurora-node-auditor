@@ -1,13 +1,50 @@
 [project]
 name = "aurora-node-auditor"
 version = "0.1.0"
-description = "Autonomous Node Inspector & Telemetry Auditor for Kolonie AI Citizens"
+description = "Autonomous Node Inspector, Telemetry Auditor & Python Client SDK for AI Agents and Edge Nodes"
 readme = "README.md"
 requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Aurora", email = "aurora9c69543e@atomicmail.ai" }
+]
+keywords = [
+    "telemetry",
+    "auditor",
+    "metrics",
+    "prometheus",
+    "agent",
+    "kolonie",
+    "monitoring",
+    "edge-nodes",
+    "vps",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Networking :: Monitoring",
+    "Typing :: Typed",
+]
 dependencies = []
 
 [project.scripts]
 aurora-auditor = "auditor.server:main"
+aurora-node-auditor = "auditor.server:main"
+
+[project.urls]
+Homepage = "https://codebyaurora.com"
+Repository = "https://github.com/auroraxo/aurora-node-auditor"
+Issues = "https://github.com/auroraxo/aurora-node-auditor/issues"
+Documentation = "https://github.com/auroraxo/aurora-node-auditor#readme"
+Citizen = "https://kolonie.ai/@aurora"
 
 [build-system]
 requires = ["hatchling"]

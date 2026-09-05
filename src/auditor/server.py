@@ -7,6 +7,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import sys
 from typing import Tuple
 
+from auditor import __version__
 from auditor.collector import collect_node_telemetry
 
 logging.basicConfig(
@@ -87,10 +88,17 @@ def create_server(host: str = "127.0.0.1", port: int = 8787) -> HTTPServer:
     return HTTPServer((host, port), AuditorRequestHandler)
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
+    """Build the command-line parser used by the installed console script."""
     parser = argparse.ArgumentParser(description="Aurora Node Auditor Server")
     parser.add_argument("--host", default="127.0.0.1", help="Bind address (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8787, help="Bind port (default: 8787)")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
     args = parser.parse_args()
 
     server = create_server(args.host, args.port)
