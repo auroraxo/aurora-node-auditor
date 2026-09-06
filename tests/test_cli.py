@@ -1,6 +1,7 @@
 """Tests for CLI parsing and entry point."""
 
 import sys
+from auditor import __version__
 from auditor.server import build_parser
 
 
@@ -25,4 +26,4 @@ def test_cli_version(capsys):
     except SystemExit as exc:
         assert exc.code == 0
     captured = capsys.readouterr()
-    assert "0.1.0" in captured.out or "0.1.0" in captured.err
+    assert __version__ in captured.out or __version__ in captured.err

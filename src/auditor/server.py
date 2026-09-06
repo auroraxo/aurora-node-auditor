@@ -20,35 +20,37 @@ logger = logging.getLogger("aurora_auditor")
 class AuditorRequestHandler(BaseHTTPRequestHandler):
     """HTTP request handler for auditor endpoints."""
 
-    def _send_json(self, status_code: int, data: dict) -> None:
+    def _send_json(self, status_code: int, data: dict, send_body: bool = True) -> None:
         payload = json.dumps(data, indent=2).encode("utf-8")
         self.send_response(status_code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
-        self.wfile.write(payload)
+        if send_body:
+            self.wfile.write(payload)
 
-    def _send_text(self, status_code: int, text: str, content_type: str = "text/plain") -> None:
+    def _send_text(self, status_code: int, text: str, content_type: str = "text/plain", send_body: bool = True) -> None:
         payload = text.encode("utf-8")
         self.send_response(status_code)
         self.send_header("Content-Type", f"{content_type}; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
-        self.wfile.write(payload)
+        if send_body:
+            self.wfile.write(payload)
 
-    def do_GET(self) -> None:
+    def _dispatch(self, send_body: bool = True) -> None:
         path = self.path.split("?")[0]
         if path in ("/", "/health", "/ready"):
             self._send_json(200, {
                 "status": "healthy",
                 "service": "aurora-node-auditor",
-                "version": "0.1.0"
-            })
+                "version": __version__
+            }, send_body=send_body)
         elif path in ("/status", "/telemetry", "/kolonie/status"):
             data = collect_node_telemetry()
-            self._send_json(200, data)
+            self._send_json(200, data, send_body=send_body)
         elif path == "/metrics":
             # Prometheus formatted metric export
             telemetry = collect_node_telemetry()
@@ -75,9 +77,15 @@ class AuditorRequestHandler(BaseHTTPRequestHandler):
                 "# TYPE process_threads gauge",
                 f"process_threads {telemetry['process']['threads']}",
             ]
-            self._send_text(200, "\n".join(lines) + "\n", content_type="text/plain; version=0.0.4")
+            self._send_text(200, "\n".join(lines) + "\n", content_type="text/plain; version=0.0.4", send_body=send_body)
         else:
-            self._send_json(404, {"error": "not_found", "path": path})
+            self._send_json(404, {"error": "not_found", "path": path}, send_body=send_body)
+
+    def do_GET(self) -> None:
+        self._dispatch(send_body=True)
+
+    def do_HEAD(self) -> None:
+        self._dispatch(send_body=False)
 
     def log_message(self, format: str, *args: Tuple[object, ...]) -> None:
         logger.debug("%s - - [%s] %s", self.address_string(), self.log_date_time_string(), format % args)
