@@ -37,6 +37,17 @@ def test_collect_node_telemetry():
     assert data["process"]["pid"] > 0
 
 
+def test_collect_node_telemetry_loadavg_oserror(monkeypatch):
+    import os
+    def mock_getloadavg_fail():
+        raise OSError("Load average unavailable in container environment")
+
+    monkeypatch.setattr(os, "getloadavg", mock_getloadavg_fail)
+    data = collect_node_telemetry()
+    assert "resources" in data
+    assert data["resources"]["load_avg"] == []
+
+
 
 def test_process_stats_structure():
     from auditor.collector import get_process_stats

@@ -5,7 +5,7 @@ import platform
 import shutil
 import threading
 import time
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 
 def get_process_stats() -> Dict[str, Any]:
@@ -87,6 +87,16 @@ def get_disk_stats(path: str = "/") -> Dict[str, Any]:
         return {"path": path, "error": str(exc)}
 
 
+def get_load_average() -> List[float]:
+    """Return 1, 5, and 15-minute load averages safely or empty list if unavailable."""
+    try:
+        if hasattr(os, "getloadavg"):
+            return [round(x, 2) for x in os.getloadavg()]
+    except (OSError, AttributeError):
+        pass
+    return []
+
+
 def collect_node_telemetry() -> Dict[str, Any]:
     """Collect full snapshot of node telemetry."""
     try:
@@ -113,7 +123,7 @@ def collect_node_telemetry() -> Dict[str, Any]:
             "memory": mem,
             "disk": disk,
             "cpu_count": os.cpu_count() or 1,
-            "load_avg": list(os.getloadavg()) if hasattr(os, "getloadavg") else [],
+            "load_avg": get_load_average(),
         },
         "process": proc,
         "service": {

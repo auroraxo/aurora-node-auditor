@@ -31,3 +31,8 @@ ENV/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Local tooling & editor
+opencode.json
+.opencode/
+
