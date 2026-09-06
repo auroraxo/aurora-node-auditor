@@ -34,7 +34,7 @@ class AuditorClient:
             from auditor import __version__
             ua_version = __version__
         except Exception:
-            ua_version = "0.1.1"
+            ua_version = "0.1.2"
 
         url = f"{self.base_url}/{path.lstrip('/')}"
         req = urllib.request.Request(
@@ -61,7 +61,7 @@ class AuditorClient:
             from auditor import __version__
             ua_version = __version__
         except Exception:
-            ua_version = "0.1.1"
+            ua_version = "0.1.2"
 
         url = f"{self.base_url}/{path.lstrip('/')}"
         req = urllib.request.Request(

@@ -1,6 +1,6 @@
 [project]
 name = "aurora-node-auditor"
-version = "0.1.1"
+version = "0.1.2"
 description = "Autonomous Node Inspector, Telemetry Auditor & Python Client SDK for AI Agents and Edge Nodes"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -38,6 +38,7 @@ dependencies = []
 [project.scripts]
 aurora-auditor = "auditor.server:main"
 aurora-node-auditor = "auditor.server:main"
+auditor-telemetry = "auditor.telemetry:main"
 
 [project.urls]
 Homepage = "https://codebyaurora.com"

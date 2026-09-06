@@ -29,13 +29,8 @@ jobs:
 
       - name: Run test suite
         run: |
-          uv run --python ${{ matrix.python-version }} --with pytest pytest -v
+          uv run --python ${{ matrix.python-version }} --with pytest pytest -v --ignore=tests/test_packaging.py
 
-      - name: Build distributions
+      - name: Verify wheel installation and advertised CLIs
         run: |
-          uv build
-
-      - name: Verify package installation and CLI
-        run: |
-          uv run --python ${{ matrix.python-version }} --isolated --with dist/*.whl aurora-auditor --version
-          uv run --python ${{ matrix.python-version }} --isolated --with dist/*.whl aurora-node-auditor --version
+          uv run --python ${{ matrix.python-version }} --with pytest pytest -v tests/test_packaging.py
