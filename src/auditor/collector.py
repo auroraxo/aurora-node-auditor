@@ -89,6 +89,12 @@ def get_disk_stats(path: str = "/") -> Dict[str, Any]:
 
 def collect_node_telemetry() -> Dict[str, Any]:
     """Collect full snapshot of node telemetry."""
+    try:
+        from auditor import __version__
+        pkg_version = __version__
+    except Exception:
+        pkg_version = "0.1.1"
+
     uptime = get_uptime_seconds()
     mem = get_memory_stats()
     disk = get_disk_stats("/")
@@ -112,7 +118,7 @@ def collect_node_telemetry() -> Dict[str, Any]:
         "process": proc,
         "service": {
             "name": "aurora-node-auditor",
-            "version": "0.1.0",
+            "version": pkg_version,
             "status": "healthy",
         }
     }

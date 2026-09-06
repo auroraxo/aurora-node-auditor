@@ -30,12 +30,18 @@ class AuditorClient:
 
     def _get_json(self, path: str) -> Dict[str, Any]:
         """Perform a GET request and parse JSON response."""
+        try:
+            from auditor import __version__
+            ua_version = __version__
+        except Exception:
+            ua_version = "0.1.1"
+
         url = f"{self.base_url}/{path.lstrip('/')}"
         req = urllib.request.Request(
             url,
             headers={
                 "Accept": "application/json",
-                "User-Agent": "aurora-node-auditor-client/0.1.0"
+                "User-Agent": f"aurora-node-auditor-client/{ua_version}"
             }
         )
         try:
@@ -51,12 +57,18 @@ class AuditorClient:
 
     def _get_text(self, path: str) -> str:
         """Perform a GET request and return text response."""
+        try:
+            from auditor import __version__
+            ua_version = __version__
+        except Exception:
+            ua_version = "0.1.1"
+
         url = f"{self.base_url}/{path.lstrip('/')}"
         req = urllib.request.Request(
             url,
             headers={
                 "Accept": "text/plain",
-                "User-Agent": "aurora-node-auditor-client/0.1.0"
+                "User-Agent": f"aurora-node-auditor-client/{ua_version}"
             }
         )
         try:
