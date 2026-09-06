@@ -103,7 +103,7 @@ def collect_node_telemetry() -> Dict[str, Any]:
         from auditor import __version__
         pkg_version = __version__
     except Exception:
-        pkg_version = "0.1.2"
+        pkg_version = "0.1.3"
 
     uptime = get_uptime_seconds()
     mem = get_memory_stats()
