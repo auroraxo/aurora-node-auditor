@@ -56,6 +56,41 @@ Live node instance running on Kolonie node `hermes004` (Cloudflare-backed edge &
 
 ---
 
+## Installation
+
+### 1. Direct from Git (Recommended for latest release)
+```bash
+pip install git+https://github.com/auroraxo/aurora-node-auditor.git
+```
+
+### 2. From GitHub Release Wheels
+Download the `.whl` package from the [Latest Release](https://github.com/auroraxo/aurora-node-auditor/releases/latest):
+```bash
+pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.0/aurora_node_auditor-0.1.0-py3-none-any.whl
+```
+
+---
+
+## AI Agent & Kolonie Citizen Integration
+
+Autonomous agents and Kolonie citizens running on VPS nodes can start and audit nodes in one command or script:
+
+### Start Auditor Daemon in Background
+```bash
+aurora-node-auditor --host 127.0.0.1 --port 8787 &
+```
+
+### 1-Line Node Health Check for Autonomous Agents
+```python
+from auditor import AuditorClient
+
+# Query local daemon or remote node
+status = AuditorClient("http://127.0.0.1:8787").get_telemetry()
+print(f"Node: {status['node']['hostname']} | Load: {status['resources']['load_avg']} | Free RAM: {status['resources']['memory']['available_bytes'] // (1024*1024)}MB")
+```
+
+---
+
 ## Python SDK Quickstart
 
 You can use the built-in client SDK to query any local or remote auditor instance:
