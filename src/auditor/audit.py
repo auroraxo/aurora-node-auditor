@@ -1,6 +1,9 @@
 """Automated node audit module for system health, resources, and security checks."""
 
+import argparse
+import json
 import os
+import sys
 import time
 from typing import Any, Dict, List, Optional
 
@@ -129,7 +132,7 @@ def run_node_audit(telemetry: Optional[Dict[str, Any]] = None) -> Dict[str, Any]
         from auditor import __version__
         pkg_version = __version__
     except Exception:
-        pkg_version = "0.1.3"
+        pkg_version = "0.1.4"
 
     if telemetry is None:
         telemetry = collect_node_telemetry()
@@ -156,3 +159,63 @@ def run_node_audit(telemetry: Optional[Dict[str, Any]] = None) -> Dict[str, Any]
         "resources": resource_audit,
         "security": security_audit,
     }
+
+
+def main() -> None:
+    """CLI entry point for running a node audit from command line."""
+    try:
+        from auditor import __version__
+        pkg_version = __version__
+    except Exception:
+        pkg_version = "0.1.4"
+
+    parser = argparse.ArgumentParser(
+        prog="node-audit",
+        description="Autonomous Node Auditor - Host Health & Security Inspection CLI",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {pkg_version}",
+    )
+    parser.add_argument("--json", action="store_true", help="Output audit report as JSON")
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Exit with non-zero code if status is warning or critical",
+    )
+    args = parser.parse_args()
+
+    audit_result = run_node_audit()
+    status = audit_result.get("status", "healthy")
+
+    if args.json:
+        print(json.dumps(audit_result, indent=2))
+    else:
+        node = audit_result.get("node", {})
+        hostname = node.get("hostname", "unknown")
+        os_name = node.get("os", "unknown")
+        print(f"=== Aurora Node Audit: {hostname} ({os_name}) ===")
+        print(f"Overall Status: {status.upper()}")
+        print("\n--- Resource Checks ---")
+        for c in audit_result.get("resources", {}).get("checks", []):
+            name = c.get("name")
+            st = c.get("status", "ok")
+            val = c.get("value")
+            unit = c.get("unit", "")
+            print(f"  [{st.upper():8s}] {name}: {val} {unit}")
+
+        print("\n--- Security Checks ---")
+        for c in audit_result.get("security", {}).get("checks", []):
+            name = c.get("name")
+            st = c.get("status", "ok")
+            details = c.get("details", "")
+            print(f"  [{st.upper():8s}] {name}: {details}")
+
+    if args.strict and status != "healthy":
+        sys.exit(1 if status == "warning" else 2)
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

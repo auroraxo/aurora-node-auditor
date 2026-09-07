@@ -143,7 +143,7 @@ def test_auditor_client_get_audit(monkeypatch):
         status = 200
         def read(self):
             return (
-                b'{"status": "healthy", "service": {"name": "aurora-node-auditor", "version": "0.1.3"},'
+                b'{"status": "healthy", "service": {"name": "aurora-node-auditor", "version": "0.1.4"},'
                 b' "resources": {"status": "healthy"}, "security": {"status": "healthy"}}'
             )
         def __enter__(self):
@@ -191,3 +191,31 @@ def test_server_audit_endpoint_get_and_head():
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_audit_cli_main(capsys, monkeypatch):
+    """Test CLI main execution with --json and default output."""
+    from auditor.audit import main
+    import sys
+
+    # Test text output
+    monkeypatch.setattr(sys, "argv", ["node-audit"])
+    try:
+        main()
+    except SystemExit as e:
+        assert e.code == 0
+    captured = capsys.readouterr()
+    assert "=== Aurora Node Audit:" in captured.out
+    assert "Overall Status:" in captured.out
+
+    # Test json output
+    monkeypatch.setattr(sys, "argv", ["node-audit", "--json"])
+    try:
+        main()
+    except SystemExit as e:
+        assert e.code == 0
+    captured_json = capsys.readouterr()
+    data = json.loads(captured_json.out)
+    assert data["status"] in ["healthy", "warning", "critical"]
+    assert "resources" in data
+    assert "security" in data

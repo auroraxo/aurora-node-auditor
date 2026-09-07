@@ -38,6 +38,8 @@ def test_advertised_scripts_non_empty():
         "aurora-node-auditor",
         "aurora-auditor",
         "auditor-telemetry",
+        "node-audit",
+        "auditor-check",
     }
 
 
@@ -113,3 +115,17 @@ def test_wheel_build_and_isolated_install_smoke():
         assert "resources" in payload
         assert payload.get("service", {}).get("name") == "aurora-node-auditor"
         assert payload.get("service", {}).get("version") == __version__
+
+        # Verify installed node-audit console script execution
+        audit_bin = venv_dir / "bin" / "node-audit"
+        audit_run = subprocess.run(
+            [str(audit_bin), "--json"],
+            capture_output=True,
+            text=True,
+        )
+        assert audit_run.returncode == 0, audit_run.stderr
+        audit_payload = json.loads(audit_run.stdout)
+        assert "status" in audit_payload
+        assert "resources" in audit_payload
+        assert "security" in audit_payload
+        assert audit_payload.get("service", {}).get("version") == __version__

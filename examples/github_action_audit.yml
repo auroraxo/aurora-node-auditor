@@ -1,0 +1,37 @@
+name: Node Health & Security Audit
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  node-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Aurora Node Auditor
+        run: |
+          pip install git+https://github.com/auroraxo/aurora-node-auditor.git
+
+      - name: Run Host Audit
+        run: |
+          node-audit --strict
+
+      - name: Export Audit JSON Report
+        if: always()
+        run: |
+          node-audit --json > node-audit-report.json
+
+      - name: Upload Audit Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-audit-report
+          path: node-audit-report.json

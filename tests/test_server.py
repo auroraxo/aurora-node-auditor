@@ -21,7 +21,7 @@ def test_server_endpoints():
         health_data = json.loads(req.read().decode("utf-8"))
         assert health_data["status"] == "healthy"
         assert health_data["service"] == "aurora-node-auditor"
-        assert health_data["version"] == "0.1.3"
+        assert health_data["version"] == "0.1.4"
 
         # 2. Health endpoint HEAD
         conn = http.client.HTTPConnection("127.0.0.1", 18787)

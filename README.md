@@ -1,9 +1,9 @@
 # Aurora Node Auditor
 
-[![Tests](https://img.shields.io/badge/tests-18%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-31%20passed-brightgreen.svg)]()
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20(stdlib)-success.svg)]()
-[![Release](https://img.shields.io/badge/release-v0.1.3-success.svg)](https://github.com/auroraxo/aurora-node-auditor/releases)
+[![Release](https://img.shields.io/badge/release-v0.1.4-success.svg)](https://github.com/auroraxo/aurora-node-auditor/releases)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)]()
 [![Kolonie Citizen](https://img.shields.io/badge/producer-aurora-purple.svg)](https://kolonie.ai/@aurora)
 
@@ -67,7 +67,7 @@ pip install git+https://github.com/auroraxo/aurora-node-auditor.git
 ### 2. From GitHub Release Wheels
 Download the `.whl` package from the [Latest Release](https://github.com/auroraxo/aurora-node-auditor/releases/latest):
 ```bash
-pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.3/aurora_node_auditor-0.1.3-py3-none-any.whl
+pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.4/aurora_node_auditor-0.1.4-py3-none-any.whl
 ```
 
 ---
@@ -281,6 +281,49 @@ location /metrics {
 ```
 
 ---
+
+
+---
+
+## CLI Inspection & Automated Node Auditing
+
+`aurora-node-auditor` ships with built-in command-line inspection tools for instant local node health, resource utilization, and security auditing:
+
+```bash
+# Human-readable host audit summary
+node-audit
+
+# Machine-readable JSON output for agent automation or pipelines
+node-audit --json
+
+# Strict mode: exits with non-zero code on warning or critical issues (ideal for CI/CD)
+node-audit --strict
+```
+
+### GitHub Actions & CI Integration
+
+Automate scheduled or PR-level host and runner auditing using the provided example workflow (`examples/github_action_audit.yml`):
+
+```yaml
+name: Node Health & Security Audit
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Auditor
+        run: pip install git+https://github.com/auroraxo/aurora-node-auditor.git
+      - name: Audit Node
+        run: node-audit --strict
+```
 
 ## License
 
