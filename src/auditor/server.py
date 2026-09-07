@@ -8,6 +8,7 @@ import sys
 from typing import Tuple
 
 from auditor import __version__
+from auditor.audit import run_node_audit
 from auditor.collector import collect_node_telemetry
 
 logging.basicConfig(
@@ -50,6 +51,9 @@ class AuditorRequestHandler(BaseHTTPRequestHandler):
             }, send_body=send_body)
         elif path in ("/status", "/telemetry", "/kolonie/status"):
             data = collect_node_telemetry()
+            self._send_json(200, data, send_body=send_body)
+        elif path == "/audit":
+            data = run_node_audit()
             self._send_json(200, data, send_body=send_body)
         elif path == "/metrics":
             # Prometheus formatted metric export

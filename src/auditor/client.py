@@ -101,6 +101,10 @@ class AuditorClient:
         """Fetch full node telemetry snapshot (JSON)."""
         return self._get_json("/telemetry")
 
+    def get_audit(self) -> Dict[str, Any]:
+        """Fetch automated node audit snapshot (JSON)."""
+        return self._get_json("/audit")
+
     def get_metrics(self) -> str:
         """Fetch raw Prometheus exposition metrics (text/plain)."""
         return self._get_text("/metrics")
