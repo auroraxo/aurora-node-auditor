@@ -56,12 +56,17 @@ while True:
     print(collect_host_vitals(sampler))
 ```
 
-The snapshot includes non-blocking CPU utilization, CPU/SoC temperature, and
-WiFi RSSI. `/proc/net/wireless` is used directly, so neither deprecated
-`iwconfig` nor the optional `iw` package is needed. Unsupported and unmeasured
-fields are explicit `None` values—not misleading zeroes. The parser handles the
-kernel's trailing-period values (`-64.`) and treats wireless noise `-256` as the
-driver's *not measured* sentinel.
+The snapshot includes non-blocking CPU utilization, CPU/SoC temperature, WiFi
+RSSI, and the optional Raspberry Pi `rpi_volt` undervoltage alarm. The alarm is
+read from `in0_lcrit_alarm` through sysfs rather than a `vcgencmd` subprocess:
+`True` means the kernel reports an alarm, `False` means it reports clear, and
+`None` means it is unavailable or unreadable (including on non-Pi hosts). It is
+a kernel alarm, not a direct rail-voltage measurement. `/proc/net/wireless` is
+used directly, so neither deprecated `iwconfig` nor the optional `iw` package is
+needed. Unsupported and unmeasured fields are explicit `None` values—not
+misleading zeroes. The parser handles the kernel's trailing-period values
+(`-64.`) and treats wireless noise `-256` as the driver's *not measured*
+sentinel.
 
 ---
 

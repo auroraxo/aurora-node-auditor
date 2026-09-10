@@ -1,9 +1,9 @@
-"""Dependency-free Pi/edge host vitals: non-blocking CPU%, temperature, WiFi RSSI.
+"""Dependency-free Pi/edge host vitals: CPU%, temperature, WiFi RSSI, power alarm.
 
-Every reader in this module is a single file read from /proc or /sys. Nothing
-shells out, nothing blocks, and a field that cannot be read returns None rather
-than a plausible-looking zero — a missing RSSI read and a signal of 0 dBm are
-different facts and must not render the same.
+Readers only inspect /proc and /sys files. Nothing shells out or sleeps, and a
+field that cannot be read returns None rather than a plausible-looking zero — a
+missing RSSI read and a signal of 0 dBm are different facts and must not render
+the same.
 """
 
 import os
@@ -13,6 +13,8 @@ from typing import Any, Dict, Optional, Tuple
 _PROC_STAT = "/proc/stat"
 _PROC_WIRELESS = "/proc/net/wireless"
 _THERMAL_GLOB = "/sys/class/thermal"
+_HWMON_ROOT = "/sys/class/hwmon"
+_RPI_HWMON_NAME = "rpi_volt"
 
 # "not measured" sentinel the wireless drivers write into the noise column.
 _NOISE_UNMEASURED = -256
@@ -96,6 +98,38 @@ def read_cpu_temperature_c(thermal_root: str = _THERMAL_GLOB) -> Optional[float]
     return None
 
 
+def read_rpi_undervoltage_alarm(hwmon_root: str = _HWMON_ROOT) -> Optional[bool]:
+    """Read the Raspberry Pi ``rpi_volt`` undervoltage alarm, or None.
+
+    The Pi kernel hwmon driver exports the cached firmware alarm as
+    ``in0_lcrit_alarm``. Hwmon device numbers vary, so only an entry named
+    ``rpi_volt`` is considered; missing, unreadable, or malformed values are
+    not interpreted as a clear alarm.
+    """
+    try:
+        devices = sorted(name for name in os.listdir(hwmon_root) if name.startswith("hwmon"))
+    except OSError:
+        return None
+    for device in devices:
+        device_path = os.path.join(hwmon_root, device)
+        try:
+            with open(os.path.join(device_path, "name"), "r", encoding="utf-8") as handle:
+                if handle.read().strip() != _RPI_HWMON_NAME:
+                    continue
+            with open(
+                os.path.join(device_path, "in0_lcrit_alarm"), "r", encoding="utf-8"
+            ) as handle:
+                value = handle.read().strip()
+        except OSError:
+            continue
+        if value == "1":
+            return True
+        if value == "0":
+            return False
+        return None
+    return None
+
+
 def read_wireless(path: str = _PROC_WIRELESS) -> Optional[Dict[str, Any]]:
     """Parse /proc/net/wireless for the first associated interface, or None.
 
@@ -153,4 +187,5 @@ def collect_host_vitals(sampler: Optional[CpuSampler] = None) -> Dict[str, Any]:
         "temp_c": read_cpu_temperature_c(),
         "rssi_dbm": wireless["rssi_dbm"] if wireless else None,
         "wireless": wireless,
+        "undervoltage_alarm": read_rpi_undervoltage_alarm(),
     }

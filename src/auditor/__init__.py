@@ -4,7 +4,13 @@ __version__ = "0.1.4"
 
 from auditor.audit import audit_resources, audit_system_security, run_node_audit
 from auditor.client import AuditorClient, AuditorError
-from auditor.host import CpuSampler, collect_host_vitals, read_cpu_temperature_c, read_wireless
+from auditor.host import (
+    CpuSampler,
+    collect_host_vitals,
+    read_cpu_temperature_c,
+    read_rpi_undervoltage_alarm,
+    read_wireless,
+)
 
 __all__ = [
     "AuditorClient",
@@ -15,6 +21,7 @@ __all__ = [
     "audit_system_security",
     "collect_host_vitals",
     "read_cpu_temperature_c",
+    "read_rpi_undervoltage_alarm",
     "read_wireless",
     "run_node_audit",
 ]
