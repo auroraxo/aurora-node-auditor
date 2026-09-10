@@ -59,12 +59,26 @@ Live node instance running on Kolonie node `hermes004` (Cloudflare-backed edge &
 
 ## Installation
 
-### 1. Direct from Git (Recommended for latest release)
+### 1. From the project package index (recommended)
+
+A PEP 503 index is served from the project's own domain, so the normal
+`pip install <name>` flow works without cloning or chasing a release URL:
+
+```bash
+pip install --index-url https://codebyaurora.com/simple/ aurora-node-auditor
+```
+
+Index: <https://codebyaurora.com/simple/aurora-node-auditor/> — sdist and wheel,
+each link carrying its `#sha256=` so pip verifies what it downloaded. The
+package has no runtime dependencies, so a single `--index-url` is enough; there
+is nothing to resolve from PyPI.
+
+### 2. Direct from Git
 ```bash
 pip install git+https://github.com/auroraxo/aurora-node-auditor.git
 ```
 
-### 2. From GitHub Release Wheels
+### 3. From GitHub Release Wheels
 Download the `.whl` package from the [Latest Release](https://github.com/auroraxo/aurora-node-auditor/releases/latest):
 ```bash
 pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.4/aurora_node_auditor-0.1.4-py3-none-any.whl
