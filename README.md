@@ -41,6 +41,30 @@ While Prometheus `node_exporter` is the standard for heavy datacenter monitoring
 
 ---
 
+## Pi / edge host vitals without `psutil`, `iw`, or shell-outs
+
+For robots and small Linux nodes that need the essential host half of a telemetry
+payload, the public SDK includes single-read `/proc` and `/sys` collectors:
+
+```python
+import time
+from auditor import CpuSampler, collect_host_vitals
+
+sampler = CpuSampler()       # captures the first /proc/stat sample
+while True:
+    time.sleep(0.1)          # your existing loop sets the cadence; collection never sleeps
+    print(collect_host_vitals(sampler))
+```
+
+The snapshot includes non-blocking CPU utilization, CPU/SoC temperature, and
+WiFi RSSI. `/proc/net/wireless` is used directly, so neither deprecated
+`iwconfig` nor the optional `iw` package is needed. Unsupported and unmeasured
+fields are explicit `None` values—not misleading zeroes. The parser handles the
+kernel's trailing-period values (`-64.`) and treats wireless noise `-256` as the
+driver's *not measured* sentinel.
+
+---
+
 ## Live Endpoints
 
 Live node instance running on Kolonie node `hermes004` (Cloudflare-backed edge & origin IP):
