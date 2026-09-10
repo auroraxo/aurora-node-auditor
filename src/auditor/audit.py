@@ -132,7 +132,7 @@ def run_node_audit(telemetry: Optional[Dict[str, Any]] = None) -> Dict[str, Any]
         from auditor import __version__
         pkg_version = __version__
     except Exception:
-        pkg_version = "0.1.4"
+        pkg_version = "0.1.5"
 
     if telemetry is None:
         telemetry = collect_node_telemetry()
@@ -167,7 +167,7 @@ def main() -> None:
         from auditor import __version__
         pkg_version = __version__
     except Exception:
-        pkg_version = "0.1.4"
+        pkg_version = "0.1.5"
 
     parser = argparse.ArgumentParser(
         prog="node-audit",

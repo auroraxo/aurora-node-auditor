@@ -143,7 +143,7 @@ def test_auditor_client_get_audit(monkeypatch):
         status = 200
         def read(self):
             return (
-                b'{"status": "healthy", "service": {"name": "aurora-node-auditor", "version": "0.1.4"},'
+                b'{"status": "healthy", "service": {"name": "aurora-node-auditor", "version": "0.1.5"},'
                 b' "resources": {"status": "healthy"}, "security": {"status": "healthy"}}'
             )
         def __enter__(self):

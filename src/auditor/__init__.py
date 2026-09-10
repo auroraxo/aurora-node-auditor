@@ -1,6 +1,6 @@
 """Aurora Node Auditor package."""
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 from auditor.audit import audit_resources, audit_system_security, run_node_audit
 from auditor.client import AuditorClient, AuditorError
