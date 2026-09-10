@@ -15,6 +15,8 @@ _PROC_WIRELESS = "/proc/net/wireless"
 _THERMAL_GLOB = "/sys/class/thermal"
 _HWMON_ROOT = "/sys/class/hwmon"
 _RPI_HWMON_NAME = "rpi_volt"
+_RPI_THROTTLE_PATH = "/sys/devices/platform/soc/soc:firmware/get_throttled"
+_CPUFREQ_ROOT = "/sys/devices/system/cpu/cpu0/cpufreq"
 
 # "not measured" sentinel the wireless drivers write into the noise column.
 _NOISE_UNMEASURED = -256
@@ -174,6 +176,60 @@ def read_wireless(path: str = _PROC_WIRELESS) -> Optional[Dict[str, Any]]:
     return None
 
 
+def read_throttle_flags(
+    path: str = _RPI_THROTTLE_PATH,
+) -> Optional[Dict[str, Any]]:
+    """Read Raspberry Pi throttle flags from sysfs and decode the bitmask."""
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            raw_text = handle.read().strip()
+        if not raw_text:
+            return None
+        mask = int(raw_text, 16)
+        if mask < 0:
+            return None
+    except (OSError, ValueError):
+        return None
+
+    return {
+        "raw": f"0x{mask:x}",
+        "undervoltage_now": bool(mask & 0x1),
+        "arm_frequency_capped_now": bool(mask & 0x2),
+        "throttled_now": bool(mask & 0x4),
+        "soft_temp_limit_now": bool(mask & 0x8),
+        "undervoltage_occurred": bool(mask & 0x10000),
+        "arm_frequency_capped_occurred": bool(mask & 0x20000),
+        "throttled_occurred": bool(mask & 0x40000),
+        "soft_temp_limit_occurred": bool(mask & 0x80000),
+    }
+
+
+def read_cpu_frequency(
+    cpufreq_root: str = _CPUFREQ_ROOT,
+) -> Optional[Dict[str, Any]]:
+    """Read current and maximum CPU frequency (in MHz) and compute capping percentage."""
+    try:
+        with open(os.path.join(cpufreq_root, "scaling_cur_freq"), "r", encoding="utf-8") as handle:
+            cur_khz = int(handle.read().strip())
+        with open(os.path.join(cpufreq_root, "cpuinfo_max_freq"), "r", encoding="utf-8") as handle:
+            max_khz = int(handle.read().strip())
+    except (OSError, ValueError):
+        return None
+
+    if max_khz <= 0 or cur_khz < 0:
+        return None
+
+    cur_mhz = round(cur_khz / 1000.0, 2)
+    max_mhz = round(max_khz / 1000.0, 2)
+    capped_pct = max(0.0, round(100.0 * (1.0 - (cur_khz / max_khz)), 2))
+
+    return {
+        "current_mhz": cur_mhz,
+        "max_mhz": max_mhz,
+        "capped_pct": capped_pct,
+    }
+
+
 def collect_host_vitals(sampler: Optional[CpuSampler] = None) -> Dict[str, Any]:
     """One snapshot of the host-side fields an edge craft or node actually needs.
 
@@ -188,4 +244,6 @@ def collect_host_vitals(sampler: Optional[CpuSampler] = None) -> Dict[str, Any]:
         "rssi_dbm": wireless["rssi_dbm"] if wireless else None,
         "wireless": wireless,
         "undervoltage_alarm": read_rpi_undervoltage_alarm(),
+        "throttle": read_throttle_flags(),
+        "cpu_frequency": read_cpu_frequency(),
     }
