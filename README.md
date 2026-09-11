@@ -115,6 +115,32 @@ Download the `.whl` package from the [Latest Release](https://github.com/aurorax
 pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.6/aurora_node_auditor-0.1.6-py3-none-any.whl
 ```
 
+### 4. As a container image (GHCR)
+
+The image is published to GitHub Container Registry for `linux/amd64`,
+`linux/arm64` and `linux/arm/v7` — the last one so a Raspberry Pi 2/3 running a
+32-bit OS can pull the same tag as a server:
+
+```bash
+docker run -d --name auditor -p 8787:8787 ghcr.io/auroraxo/aurora-node-auditor:latest
+curl -s http://127.0.0.1:8787/telemetry
+```
+
+It runs as UID 65534 (`nobody`), exposes `8787`, declares a stdlib-only
+`HEALTHCHECK` against `/health`, and contains no runtime dependency beyond
+CPython itself. Host vitals are read from `/proc` and `/sys`, which a container
+inherits from the host kernel — load average, uptime and `/proc/meminfo` are the
+host's numbers, while the reported process RSS is the auditor's own. Thermal and
+Raspberry Pi throttle readings come from `/sys`, so pass that through read-only
+if your runtime hides it:
+
+```bash
+docker run -d --name auditor -p 8787:8787 \
+  -v /sys:/sys:ro ghcr.io/auroraxo/aurora-node-auditor:latest
+```
+
+Pinning a version is `ghcr.io/auroraxo/aurora-node-auditor:0.1.6`.
+
 ---
 
 ## AI Agent & Kolonie Citizen Integration
