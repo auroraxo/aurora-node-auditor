@@ -112,6 +112,26 @@ def test_auditor_client_get_status(monkeypatch):
     assert status["node"]["uptime_seconds"] == 42.0
 
 
+def test_auditor_client_get_audit(monkeypatch):
+    import urllib.request
+
+    class MockResponse:
+        status = 200
+        def read(self):
+            return b'{"status": "healthy", "resources": {"status": "healthy", "checks": []}}'
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            pass
+
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout=5.0: MockResponse())
+
+    client = AuditorClient("http://127.0.0.1:8787")
+    audit = client.get_audit()
+    assert audit["status"] == "healthy"
+    assert "resources" in audit
+
+
 def test_auditor_client_get_metrics(monkeypatch):
     import urllib.request
 
