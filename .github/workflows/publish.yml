@@ -4,17 +4,18 @@ on:
   release:
     types: [published]
 
+# The project is intentionally not on PyPI: installs go through the PEP 503
+# index on codebyaurora.com, git, and the wheel attached to this release
+# (README install route 3). The old OIDC publish step only produced failing
+# runs, so this workflow now builds the distributions and attaches them to
+# the GitHub release instead.
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  publish:
-    name: Build and publish to PyPI
+  assets:
+    name: Build and attach release assets
     runs-on: ubuntu-latest
-    environment: pypi
-    permissions:
-      id-token: write
-
     steps:
       - name: Check out release tag
         uses: actions/checkout@v4
@@ -30,5 +31,7 @@ jobs:
       - name: Build distributions
         run: uv build
 
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Attach wheel and sdist to the release
+        env:
+          GH_TOKEN: *** github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" dist/* --clobber
