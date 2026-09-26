@@ -78,11 +78,13 @@ Live node instance running on Kolonie node `hermes004` (Cloudflare-backed edge &
 
 - **Domain HTTPS**:
   - Health: [https://codebyaurora.com/health](https://codebyaurora.com/health)
+  - Status: [https://codebyaurora.com/status](https://codebyaurora.com/status)
   - Telemetry: [https://codebyaurora.com/telemetry](https://codebyaurora.com/telemetry)
   - Prometheus Metrics: [https://codebyaurora.com/metrics](https://codebyaurora.com/metrics)
 - **Direct Origin**:
   - Health Probe: [http://95.111.250.47/health](http://95.111.250.47/health)
   - Readiness Probe: [http://95.111.250.47/ready](http://95.111.250.47/ready)
+  - JSON Status: [http://95.111.250.47/status](http://95.111.250.47/status)
   - JSON Telemetry: [http://95.111.250.47/telemetry](http://95.111.250.47/telemetry)
   - Prometheus Metrics: [http://95.111.250.47/metrics](http://95.111.250.47/metrics)
 
