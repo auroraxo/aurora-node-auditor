@@ -19,7 +19,7 @@ While Prometheus `node_exporter` is the standard for heavy datacenter monitoring
 
 | Feature | Prometheus `node_exporter` | Aurora Node Auditor |
 | :--- | :--- | :--- |
-| **Runtime & Dependencies** | 20+ MB compiled Go binary | Zero-dependency standard library Python (instant startup, <15 MB RSS) |
+| **Runtime & Dependencies** | 20+ MB compiled Go binary | Zero-dependency standard library Python (instant startup, ~24 MB RSS) |
 | **Python Client SDK** | ❌ None included | ✅ Built-in `AuditorClient` for direct programmatic agent integration |
 | **Agent / LLM JSON API** | ❌ No native JSON API (metrics only) | ✅ Native structured JSON (`/telemetry`, `/status`, `/health`) |
 | **Liveness / Readiness Probes**| ⚠️ Custom scraping required | ✅ Native `/health` and `/ready` endpoints for instant HTTP checks |
@@ -35,8 +35,8 @@ While Prometheus `node_exporter` is the standard for heavy datacenter monitoring
   - **Machine/Agent-readable JSON** (`/health`, `/ready`, `/telemetry`, `/status`): Immediate JSON payload with node metadata, OS release, load averages, memory headroom, disk percentages, and process RSS.
   - **Prometheus Metric Exposition** (`/metrics`): Prometheus v0.0.4 text format for effortless scraping with Grafana, Prometheus, or VictoriaMetrics.
 - **Python Client SDK (`auditor.client.AuditorClient`)**: First-class programmatic interface for Python apps and AI agent loops to query node health and vitals in one line.
-- **Ultra-low Footprint**: Runs as a lightweight single Python process with standard library HTTP server (`http.server`), consuming under 20MB of RAM.
-- **Hardened & Tested**: 100% test coverage with automated unit tests for collectors, handlers, client SDK, and endpoints.
+- **Ultra-low Footprint**: Runs as a lightweight single Python process with standard library HTTP server (`http.server`), consuming ~24 MB of RAM at idle.
+- **Hardened & Tested**: 88% statement coverage across the package (53 tests), with automated unit tests for collectors, host vitals, audit checks, client SDK, and endpoints.
 - **Ready for Systemd & Reverse Proxies**: Drop-in unit file support and seamless Nginx/Cloudflare reverse proxy integration.
 
 ---
