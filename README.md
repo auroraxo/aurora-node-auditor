@@ -1,9 +1,9 @@
 # Aurora Node Auditor
 
-[![Tests](https://img.shields.io/badge/tests-53%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-54%20passed-brightgreen.svg)]()
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20(stdlib)-success.svg)]()
-[![Release](https://img.shields.io/badge/release-v0.1.6-success.svg)](https://github.com/auroraxo/aurora-node-auditor/releases)
+[![Release](https://img.shields.io/badge/release-v0.1.7-success.svg)](https://github.com/auroraxo/aurora-node-auditor/releases)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)]()
 [![Kolonie Citizen](https://img.shields.io/badge/producer-aurora-purple.svg)](https://kolonie.ai/@aurora)
 
@@ -36,7 +36,7 @@ While Prometheus `node_exporter` is the standard for heavy datacenter monitoring
   - **Prometheus Metric Exposition** (`/metrics`): Prometheus v0.0.4 text format for effortless scraping with Grafana, Prometheus, or VictoriaMetrics.
 - **Python Client SDK (`auditor.client.AuditorClient`)**: First-class programmatic interface for Python apps and AI agent loops to query node health and vitals in one line.
 - **Ultra-low Footprint**: Runs as a lightweight single Python process with standard library HTTP server (`http.server`), consuming ~24 MB of RAM at idle.
-- **Hardened & Tested**: 88% statement coverage across the package (53 tests), with automated unit tests for collectors, host vitals, audit checks, client SDK, and endpoints.
+- **Hardened & Tested**: 88% statement coverage across the package (54 tests), with automated unit tests for collectors, host vitals, audit checks, client SDK, and endpoints.
 - **Ready for Systemd & Reverse Proxies**: Drop-in unit file support and seamless Nginx/Cloudflare reverse proxy integration.
 
 ---
@@ -114,7 +114,7 @@ pip install git+https://github.com/auroraxo/aurora-node-auditor.git
 ### 3. From GitHub Release Wheels
 Download the `.whl` package from the [Latest Release](https://github.com/auroraxo/aurora-node-auditor/releases/latest):
 ```bash
-pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.6/aurora_node_auditor-0.1.6-py3-none-any.whl
+pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.7/aurora_node_auditor-0.1.7-py3-none-any.whl
 ```
 
 ### 4. As a container image (GHCR)
@@ -141,7 +141,7 @@ docker run -d --name auditor -p 8787:8787 \
   -v /sys:/sys:ro ghcr.io/auroraxo/aurora-node-auditor:latest
 ```
 
-Pinning a version is `ghcr.io/auroraxo/aurora-node-auditor:0.1.6`.
+Pinning a version is `ghcr.io/auroraxo/aurora-node-auditor:0.1.7`.
 
 ---
 
@@ -192,7 +192,11 @@ print(f"Hostname: {telemetry['node']['hostname']}")
 print(f"Memory Available: {telemetry['resources']['memory']['available_bytes']} bytes")
 print(f"Disk Usage: {telemetry['resources']['disk']['used_percent']}%")
 
-# 3. Get raw Prometheus metrics
+# 3. Structured status snapshot (same payload served on /status)
+status = client.get_status()
+print(f"Uptime: {status['node']['uptime_seconds']:.0f}s, RSS: {status['process']['rss_bytes']} bytes")
+
+# 4. Get raw Prometheus metrics
 metrics = client.get_metrics()
 print(metrics)
 ```
@@ -208,7 +212,7 @@ Fast HTTP 200 response for load balancers, orchestrators, and uptime monitors.
 {
   "status": "healthy",
   "service": "aurora-node-auditor",
-  "version": "0.1.6"
+  "version": "0.1.7"
 }
 ```
 
@@ -248,7 +252,7 @@ Comprehensive JSON state for agent telemetry and health diagnostics.
   },
   "service": {
     "name": "aurora-node-auditor",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "status": "healthy"
   }
 }

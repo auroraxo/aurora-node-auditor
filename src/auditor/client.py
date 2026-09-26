@@ -101,6 +101,11 @@ class AuditorClient:
         """Fetch full node telemetry snapshot (JSON)."""
         return self._get_json("/telemetry")
 
+    def get_status(self) -> Dict[str, Any]:
+        """Fetch structured node status (JSON): node metadata, uptime,
+        memory and disk usage."""
+        return self._get_json("/status")
+
     def get_audit(self) -> Dict[str, Any]:
         """Fetch automated node audit snapshot (JSON)."""
         return self._get_json("/audit")
