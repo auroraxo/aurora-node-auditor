@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Optional
 
 from auditor.collector import collect_node_telemetry
 
+from auditor.version import get_version
+
 
 def audit_resources(telemetry: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Audit system resource utilization against healthy operational thresholds."""
@@ -128,11 +130,7 @@ def audit_system_security() -> Dict[str, Any]:
 
 def run_node_audit(telemetry: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Execute complete automated node audit."""
-    try:
-        from auditor import __version__
-        pkg_version = __version__
-    except Exception:
-        pkg_version = "0.1.5"
+    pkg_version = get_version()
 
     if telemetry is None:
         telemetry = collect_node_telemetry()
@@ -163,11 +161,7 @@ def run_node_audit(telemetry: Optional[Dict[str, Any]] = None) -> Dict[str, Any]
 
 def main() -> None:
     """CLI entry point for running a node audit from command line."""
-    try:
-        from auditor import __version__
-        pkg_version = __version__
-    except Exception:
-        pkg_version = "0.1.5"
+    pkg_version = get_version()
 
     parser = argparse.ArgumentParser(
         prog="node-audit",

@@ -1,6 +1,6 @@
 # Aurora Node Auditor
 
-[![Tests](https://img.shields.io/badge/tests-55%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-59%20passed-brightgreen.svg)]()
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20(stdlib)-success.svg)]()
 [![Release](https://img.shields.io/badge/release-v0.1.7-success.svg)](https://github.com/auroraxo/aurora-node-auditor/releases)
@@ -36,7 +36,7 @@ While Prometheus `node_exporter` is the standard for heavy datacenter monitoring
   - **Prometheus Metric Exposition** (`/metrics`): Prometheus v0.0.4 text format for effortless scraping with Grafana, Prometheus, or VictoriaMetrics.
 - **Python Client SDK (`auditor.client.AuditorClient`)**: First-class programmatic interface for Python apps and AI agent loops to query node health and vitals in one line.
 - **Ultra-low Footprint**: Runs as a lightweight single Python process with standard library HTTP server (`http.server`), consuming ~24 MB of RAM at idle.
-- **Hardened & Tested**: 88% statement coverage across the package (55 tests), with automated unit tests for collectors, host vitals, audit checks, client SDK, and endpoints.
+- **Hardened & Tested**: 90% statement coverage across the package (59 tests), with automated unit tests for collectors, host vitals, audit checks, client SDK, and endpoints.
 - **Ready for Systemd & Reverse Proxies**: Drop-in unit file support and seamless Nginx/Cloudflare reverse proxy integration.
 
 ---

@@ -7,6 +7,8 @@ import threading
 import time
 from typing import Any, Dict, List
 
+from auditor.version import get_version
+
 
 def get_process_stats() -> Dict[str, Any]:
     """Get process-level metrics for the auditor."""
@@ -99,11 +101,7 @@ def get_load_average() -> List[float]:
 
 def collect_node_telemetry() -> Dict[str, Any]:
     """Collect full snapshot of node telemetry."""
-    try:
-        from auditor import __version__
-        pkg_version = __version__
-    except Exception:
-        pkg_version = "0.1.5"
+    pkg_version = get_version()
 
     uptime = get_uptime_seconds()
     mem = get_memory_stats()

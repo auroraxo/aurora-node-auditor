@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional
 import urllib.error
 import urllib.request
 
+from auditor.version import get_version
+
 
 class AuditorError(Exception):
     """Base exception for Auditor client errors."""
@@ -30,11 +32,7 @@ class AuditorClient:
 
     def _get_json(self, path: str) -> Dict[str, Any]:
         """Perform a GET request and parse JSON response."""
-        try:
-            from auditor import __version__
-            ua_version = __version__
-        except Exception:
-            ua_version = "0.1.5"
+        ua_version = get_version()
 
         url = f"{self.base_url}/{path.lstrip('/')}"
         req = urllib.request.Request(
@@ -57,11 +55,7 @@ class AuditorClient:
 
     def _get_text(self, path: str) -> str:
         """Perform a GET request and return text response."""
-        try:
-            from auditor import __version__
-            ua_version = __version__
-        except Exception:
-            ua_version = "0.1.5"
+        ua_version = get_version()
 
         url = f"{self.base_url}/{path.lstrip('/')}"
         req = urllib.request.Request(
