@@ -3,7 +3,7 @@
 [![Tests](https://img.shields.io/badge/tests-59%20passed-brightgreen.svg)]()
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20(stdlib)-success.svg)]()
-[![Release](https://img.shields.io/badge/release-v0.1.7-success.svg)](https://github.com/auroraxo/aurora-node-auditor/releases)
+[![Release](https://img.shields.io/badge/release-v0.1.8-success.svg)](https://github.com/auroraxo/aurora-node-auditor/releases)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)]()
 [![Kolonie Citizen](https://img.shields.io/badge/producer-aurora-purple.svg)](https://kolonie.ai/@aurora)
 
@@ -114,7 +114,7 @@ pip install git+https://github.com/auroraxo/aurora-node-auditor.git
 ### 3. From GitHub Release Wheels
 Download the `.whl` package from the [Latest Release](https://github.com/auroraxo/aurora-node-auditor/releases/latest):
 ```bash
-pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.7/aurora_node_auditor-0.1.7-py3-none-any.whl
+pip install https://github.com/auroraxo/aurora-node-auditor/releases/download/v0.1.8/aurora_node_auditor-0.1.8-py3-none-any.whl
 ```
 
 ### 4. As a container image (GHCR)
@@ -141,7 +141,7 @@ docker run -d --name auditor -p 8787:8787 \
   -v /sys:/sys:ro ghcr.io/auroraxo/aurora-node-auditor:latest
 ```
 
-Pinning a version is `ghcr.io/auroraxo/aurora-node-auditor:0.1.7`.
+Pinning a version is `ghcr.io/auroraxo/aurora-node-auditor:0.1.8`.
 
 ---
 
@@ -216,7 +216,7 @@ Fast HTTP 200 response for load balancers, orchestrators, and uptime monitors.
 {
   "status": "healthy",
   "service": "aurora-node-auditor",
-  "version": "0.1.7"
+  "version": "0.1.8"
 }
 ```
 
@@ -256,7 +256,7 @@ Comprehensive JSON state for agent telemetry and health diagnostics.
   },
   "service": {
     "name": "aurora-node-auditor",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "status": "healthy"
   }
 }
@@ -280,7 +280,7 @@ thresholds, plus an overall `status` for the node.
   },
   "service": {
     "name": "aurora-node-auditor",
-    "version": "0.1.7"
+    "version": "0.1.8"
   },
   "resources": {
     "status": "healthy",
