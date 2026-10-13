@@ -7,7 +7,18 @@ import threading
 import time
 from typing import Any, Dict, List
 
+from auditor.host import CpuSampler
 from auditor.version import get_version
+
+# One process-wide sampler so consecutive telemetry scrapes produce a CPU
+# delta without blocking. First call returns None (no previous sample).
+_CPU_SAMPLER = CpuSampler()
+
+
+def _sample_cpu_percent() -> float:
+    """Return CPU busy % since the previous call (0.0 on the first call)."""
+    value = _CPU_SAMPLER.sample()
+    return 0.0 if value is None else round(value, 2)
 
 
 def get_process_stats() -> Dict[str, Any]:
@@ -107,7 +118,8 @@ def collect_node_telemetry() -> Dict[str, Any]:
     mem = get_memory_stats()
     disk = get_disk_stats("/")
     proc = get_process_stats()
-    
+    cpu_used_percent = _sample_cpu_percent()
+
     return {
         "timestamp": time.time(),
         "node": {
@@ -121,6 +133,7 @@ def collect_node_telemetry() -> Dict[str, Any]:
             "memory": mem,
             "disk": disk,
             "cpu_count": os.cpu_count() or 1,
+            "cpu_used_percent": cpu_used_percent,
             "load_avg": get_load_average(),
         },
         "process": proc,

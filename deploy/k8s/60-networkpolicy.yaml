@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aurora-auditor
+  namespace: aurora-auditor
+  labels:
+    app.kubernetes.io/name: aurora-node-auditor
+    app.kubernetes.io/component: auditor
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: aurora-node-auditor
+      app.kubernetes.io/component: auditor
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow Prometheus scrapes from inside the cluster. Tighter than `from: any`
+    # because the auditor is a read-only endpoint; only metrics scrapers belong
+    # here. Add an empty `podSelector` allow-list if you wire a sidecar/debugger.
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 8787
+          protocol: TCP

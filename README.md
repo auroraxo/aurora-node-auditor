@@ -128,6 +128,22 @@ docker run -d --name auditor -p 8787:8787 ghcr.io/auroraxo/aurora-node-auditor:l
 curl -s http://127.0.0.1:8787/telemetry
 ```
 
+### 5. Kubernetes (5-minute ops install)
+
+A ready-to-apply manifest bundle (`deploy/k8s/` — Deployment, Service,
+ServiceMonitor, PodDisruptionBudget, NetworkPolicy, ServiceAccount +
+kustomization) and a Grafana 10+ dashboard (`dashboards/auditor-node-vitals.json`,
+12 panels, `$instance` variable) ship in this repo:
+
+```bash
+kubectl apply -k deploy/k8s
+kubectl -n aurora-auditor port-forward svc/aurora-auditor 8787:8787
+```
+
+Import the dashboard via Grafana → Dashboards → Import → upload the JSON and
+pick your Prometheus datasource. Full walkthrough, expected metric series and
+security context notes: [docs/install.md](docs/install.md).
+
 It runs as UID 65534 (`nobody`), exposes `8787`, declares a stdlib-only
 `HEALTHCHECK` against `/health`, and contains no runtime dependency beyond
 CPython itself. Host vitals are read from `/proc` and `/sys`, which a container

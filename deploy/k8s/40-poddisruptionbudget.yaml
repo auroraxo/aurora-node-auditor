@@ -1,0 +1,14 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: aurora-auditor
+  namespace: aurora-auditor
+  labels:
+    app.kubernetes.io/name: aurora-node-auditor
+    app.kubernetes.io/component: auditor
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: aurora-node-auditor
+      app.kubernetes.io/component: auditor

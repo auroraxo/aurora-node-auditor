@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: aurora-auditor
+
+commonLabels:
+  app.kubernetes.io/name: aurora-node-auditor
+  app.kubernetes.io/part-of: aurora-observability
+
+resources:
+  - 00-namespace.yaml
+  - 10-serviceaccount.yaml
+  - 20-deployment.yaml
+  - 30-service.yaml
+  - 40-poddisruptionbudget.yaml
+  - 50-servicemonitor.yaml
+  - 60-networkpolicy.yaml

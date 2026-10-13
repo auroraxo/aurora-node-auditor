@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: aurora-auditor
+  namespace: aurora-auditor
+  labels:
+    app.kubernetes.io/name: aurora-node-auditor
+    app.kubernetes.io/component: auditor
+    release: prometheus  # common Prometheus Operator default
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: aurora-node-auditor
+      app.kubernetes.io/component: auditor
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s

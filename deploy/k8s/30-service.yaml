@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aurora-auditor
+  namespace: aurora-auditor
+  labels:
+    app.kubernetes.io/name: aurora-node-auditor
+    app.kubernetes.io/component: auditor
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: aurora-node-auditor
+    app.kubernetes.io/component: auditor
+  ports:
+    - name: http
+      port: 8787
+      targetPort: http
+      protocol: TCP

@@ -58,3 +58,28 @@ def test_process_stats_structure():
     assert proc["pid"] > 0
     assert proc["threads"] >= 1
 
+
+
+def test_cpu_used_percent_range():
+    """cpu_used_percent is numeric, 0-100, and stable across calls."""
+    first = collect_node_telemetry()["resources"]["cpu_used_percent"]
+    assert isinstance(first, (int, float))
+    assert 0.0 <= first <= 100.0
+
+    second = collect_node_telemetry()["resources"]["cpu_used_percent"]
+    assert isinstance(second, (int, float))
+    assert 0.0 <= second <= 100.0
+
+
+def test_loadavg_absent_platform_keeps_metrics_tolerant(monkeypatch):
+    """/metrics must not crash when getloadavg is unavailable (containers)."""
+    import os
+
+    def _fail():
+        raise OSError("no loadavg")
+
+    monkeypatch.setattr(os, "getloadavg", _fail)
+    from auditor.collector import collect_node_telemetry
+
+    data = collect_node_telemetry()
+    assert data["resources"]["load_avg"] == []

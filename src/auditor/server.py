@@ -58,6 +58,7 @@ class AuditorRequestHandler(BaseHTTPRequestHandler):
         elif path == "/metrics":
             # Prometheus formatted metric export
             telemetry = collect_node_telemetry()
+            load = telemetry["resources"].get("load_avg") or []
             lines = [
                 "# HELP node_uptime_seconds Total node uptime in seconds",
                 "# TYPE node_uptime_seconds gauge",
@@ -65,6 +66,9 @@ class AuditorRequestHandler(BaseHTTPRequestHandler):
                 "# HELP node_cpu_count Logical CPU count",
                 "# TYPE node_cpu_count gauge",
                 f"node_cpu_count {telemetry['resources']['cpu_count']}",
+                "# HELP node_cpu_used_percent CPU busy percentage since the previous sample, 0-100",
+                "# TYPE node_cpu_used_percent gauge",
+                f"node_cpu_used_percent {telemetry['resources'].get('cpu_used_percent', 0.0)}",
                 "# HELP node_memory_total_bytes Total physical memory in bytes",
                 "# TYPE node_memory_total_bytes gauge",
                 f"node_memory_total_bytes {telemetry['resources']['memory']['total_bytes']}",
@@ -81,6 +85,11 @@ class AuditorRequestHandler(BaseHTTPRequestHandler):
                 "# TYPE process_threads gauge",
                 f"process_threads {telemetry['process']['threads']}",
             ]
+            # Load averages (1/5/15 min) when the platform exposes them.
+            for name, value in zip(("node_load1", "node_load5", "node_load15"), load):
+                lines.append(f"# HELP {name} {name[5:]}-minute load average")
+                lines.append(f"# TYPE {name} gauge")
+                lines.append(f"{name} {value}")
             self._send_text(200, "\n".join(lines) + "\n", content_type="text/plain; version=0.0.4", send_body=send_body)
         else:
             self._send_json(404, {"error": "not_found", "path": path}, send_body=send_body)
